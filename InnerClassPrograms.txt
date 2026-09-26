@@ -1,0 +1,390 @@
+Inner Class
+===============
+Program - 1
+~~~~~~~~~~~~~~~~~~~~~
+class Outer
+{
+	class Inner
+	{
+	
+	}
+}
+
+dJava>javac Outer.java
+
+dJava>java Outer
+Error: Main method not found in class Outer, please define the main method as:
+   public static void main(String[] args)
+or a JavaFX application class must extend javafx.application.Application
+
+.class files generated are
+Outer.class
+Outer$Inner.class
+
+Program - 2
+~~~~~~~~~~~~~~~~~~~~~
+
+class Outer
+{
+	class Inner
+	{
+	
+	}
+	public static void main(String args[])
+	{
+		System.out.println("Outer class main method");
+	}
+}
+C:\Users\saipr\Desktop\dJava>java Outer
+Outer class main method
+
+C:\Users\saipr\Desktop\dJava>java Outer$Inner
+Error: Main method not found in class Outer$Inner, please define the main method as:
+   public static void main(String[] args)
+or a JavaFX application class must extend javafx.application.Application
+
+
+Program - 3
+~~~~~~~~~~~~~~~~~~~~~
+
+class Outer
+{
+	class Inner
+	{
+		public static void main(String args[])
+		{
+			System.out.println("Inner class main method");
+		}
+	}
+}
+
+dJava>javac Outer.java
+
+dJava>java Outer
+Error: Main method not found in class Outer, please define the main method as:
+   public static void main(String[] args)
+or a JavaFX application class must extend javafx.application.Application
+
+dJava>java Outer$Inner
+Inner class main method
+
+Program - 4 Case - I Accessing Inner Class Code from static area of outer class
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+class Outer
+{
+	class Inner
+	{
+		public void m1()
+		{
+			System.out.println("Inner class method");
+		}
+	}
+	public static void main(String args[])
+	{
+		Outer o = new Outer();
+		Outer.Inner i = o.new Inner();
+		i.m1();
+	}
+}
+
+class Outer
+{
+	class Inner
+	{
+		public void m1()
+		{
+			System.out.println("Inner class method");
+		}
+	}
+	public static void main(String args[])
+	{
+		Outer.Inner i = new Outer().new Inner();
+		i.m1();
+	}
+}
+
+
+class Outer
+{
+	class Inner
+	{
+		public void m1()
+		{
+			System.out.println("Inner class method");
+		}
+	}
+	public static void main(String args[])
+	{
+		new Outer().new Inner().m1();
+	}
+}
+
+
+>javac Outer.java
+
+dJava>java Outer
+Inner class method
+
+Program - 5  Case - II Accessing Inner Class Code from instance area of outer class
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+class Outer
+{
+	class Inner
+	{
+		public void m1()
+		{
+			System.out.println("Inner class method case 2");
+		}
+	}
+	public void m2()
+	{
+		Inner i = new Inner();
+		i.m1();
+	}
+	public static void main(String args[])
+	{
+		Outer o = new Outer();
+		o.m2();
+	}
+}
+dJava>javac Outer.java
+
+dJava>java Outer
+Inner class method case 2
+
+
+Program - 6 Case - III Accessing Inner Class Code from outside of outer class
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+class Outer
+{
+	class Inner
+	{
+		public void m1()
+		{
+			System.out.println("Inner class method case 3");
+		}
+	}
+}
+
+class Test
+{
+	public static void main(String ...args)
+	{
+		Outer o = new Outer();
+		Outer.Inner i = o.new Inner();
+		i.m1();
+	}
+}
+
+dJava>javac Outer.java
+
+dJava>java Test
+Inner class method case 3
+
+Program - 7
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+class Outer
+{
+	class Inner
+	{
+		int x = 10;
+		static int y = 20;
+		public void m1()
+		{
+			System.out.println("x = "+x);
+			System.out.println("y = "+y);
+		}
+	}
+	public static void main(String ...args)
+	{
+		new Outer().new Inner().m1();
+	}
+}
+dJava>javac Outer.java
+
+dJava>java Outer
+x = 10
+y = 20
+
+Program - 8	Refering inner class and outer class variable
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+class Outer
+{
+	int x = 10;
+	class Inner
+	{
+		int x = 100;
+		public void m1()
+		{
+			int x = 1000;
+			System.out.println(x);			// 1000
+			System.out.println(this.x);		// 100
+			System.out.println(Inner.this.x);//100
+			System.out.println(Outer.this.x);//10
+		}
+	}
+	public static void main(String ...args)
+	{
+		new Outer().new Inner().m1();
+	}
+}
+
+Program - 9	Nesting of Inner Class
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+class A
+{
+	class B
+	{
+		class C
+		{
+			public void m1()
+			{
+				System.out.println("Inside inner class C");
+			}
+		}
+	}
+}
+class Test
+{
+	public static void main(String args[])
+	{
+		A a = new A();
+		A.B b = a.new B();
+		A.B.C c = b.new C();
+		c.m1();
+	}
+}
+dJava>javac Test.java
+
+dJava>java Test
+Inside inner class C
+
+Program - 10	Example of Method Local Inner Class
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+class Test
+{
+	public void m1()
+	{
+		class Inner
+		{
+			public void sum(int a, int b)
+			{
+				System.out.println("The sum is "+(a+b));
+			}
+		}
+		Inner i = new Inner();
+		i.sum(10,20);
+		i.sum(100,200);
+		i.sum(1000,2000);
+	}
+	public static void main(String args[])
+	{
+		Test t = new Test();
+		t.m1();
+	}
+}
+dJava>javac Test.java
+
+dJava>java Test
+The sum is 30
+The sum is 300
+The sum is 3000
+
+Program - 11	If we declare method local inner class inside an instance method of Outer class then we can access both static and non-static variables of outer class, if we declare method local inner class inside an static method of outer class then we can only access static member of outer class
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+class Test
+{
+	int x = 10;
+	static int y = 20;
+	public void m1()
+	{
+		class Inner
+		{
+			public void m2()
+			{
+				System.out.println("x = "+x);
+				System.out.println("y = "+y);
+			}
+		}
+		Inner i = new Inner();
+		i.m2();
+	}
+	public static void main(String args[])
+	{
+		Test t = new Test();
+		t.m1();
+	}
+}
+dJava>javac Test.java
+
+dJava>java Test
+x = 10
+y = 20
+
+class Test
+{
+	int x = 10;
+	static int y = 20;
+	public static void m1()
+	{
+		class Inner
+		{
+			public void m2()
+			{
+				System.out.println("x = "+x); 	>javac Test.java
+													Test.java:16: error: non-static variable x cannot be referenced from a static context
+																					System.out.println("x = "+x);
+																											  ^
+													1 error
+				System.out.println("y = "+y);		
+													dJava>javac Test.java
+
+													dJava>java Test
+													y = 20
+			}
+		}
+		Inner i = new Inner();
+		i.m2();
+	}
+	public static void main(String args[])
+	{
+		Test t = new Test();
+		t.m1();
+	}
+}
+
+Program - 12	From method local inner class we can't access local variable of the method in which we declare Inner class. Unless the local variable is declared as final (changed rule)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+class Test
+{
+	public void m1()
+	{
+		int x = 10;
+		class Inner
+		{
+			public void m2()
+			{
+				System.out.println("x = "+x);
+			}
+		}
+		Inner i = new Inner();
+		i.m2();
+	}
+	public static void main(String args[])
+	{
+		Test t = new Test();
+		t.m1();
+	}
+}
+dJava>javac Test.java
+
+dJava>java Test
+x = 10
+
+
+
+Program - 8	Refering inner class and outer class variable
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
